@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 import datetime
+from bson import ObjectId
 
 class User(BaseModel):
     nickname:str

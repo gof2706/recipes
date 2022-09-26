@@ -19,14 +19,14 @@ async def get_recipes():
 
 @router.get('/get_user')
 async def get_user(id):
-    pass
+    return await service.get_user(id)
 
 @router.get('/get_recipe')
 async def get_recipe(id):
     pass
 
 
-@router.post('/register_user')
+@router.post('/register_user',response_description="Register new user")
 async def register(data:RegisterUser):
     return await service.register_user(data)
 
