@@ -23,7 +23,7 @@ async def get_user(id):
 
 @router.get('/get_recipe')
 async def get_recipe(id):
-    pass
+    return await service.get_recipe(id)
 
 
 @router.post('/register_user',response_description="Register new user")
@@ -37,7 +37,8 @@ async def add_user(user:User):
     return user
 
 @router.post('/add_recipe')
-async def add_recipes(recipe):
+async def add_recipes(recipe:Recipe):
+    return await service.add_recipe(recipe)
     pass
 
 @router.put('/update_user')
