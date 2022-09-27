@@ -6,8 +6,8 @@ class User(BaseModel):
     nickname:str
     ban:bool | None = False
     favorites:list[str] | None = []
-    created:int | None=None
-    updated:int | None=None
+    created:float | None=None
+    updated:float | None=None
     auth_token:str | None = None
     recipes_count:int | None = 0
 
@@ -22,8 +22,8 @@ class ReturnedUser(BaseModel):
     nickname:str
     ban:bool | None = False
     favorites:list[str] | None = []
-    created:int | None=None
-    updated:int | None=None
+    created:float | None=None
+    updated:float | None=None
     recipes_count:int | None = 0
     class Config:
         orm_mode = True

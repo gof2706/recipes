@@ -1,6 +1,7 @@
 # from datetime import datetime
 import time
 import json
+from models.recipe import ReturnedRecipe
 from models.user import RegisterUser, ReturnedUser, User
 from pymongo import MongoClient
 import pymongo
@@ -58,7 +59,7 @@ async def get_all_users():
     for i in users:
         # print(i)
         alfa=ReturnedUser.parse_obj(i).dict()
-        print(type(alfa))
+        # print(type(alfa))
         alfa["id"]=str(i["_id"])
         res.append(alfa)
     return res
@@ -66,7 +67,7 @@ async def get_all_users():
 async def add_recipe(data):
     recipe=data.dict()
     ob=ObjectId(recipe["author"])
-    users_collection.find_one_and_update(ob,{ '$inc': { "recipes_count": 1 } })
+    users_collection.find_one_and_update({"_id":ob},{ '$inc': { "recipes_count": 1 } })
     recipe["created"]=time.time()
     res=recipe_collection.insert_one(recipe)
     return {"msg":"Success"}
@@ -77,7 +78,18 @@ async def get_recipe(data):
     # res=user
     return json.loads(json.dumps(recipe,default=str))
 
-async def get_all_recipes():
-    pass
+async def get_all_recipes(data):
+    query=data
+    print(data)
+    recipes=recipe_collection.find({query["filter"]:{"$regex":query["query"]},"ban":False,}).sort(query["sort_filter"],pymongo.DESCENDING).skip((int(query["page"])-1)*2).limit(2)
+    res=[]
+    for i in recipes:
+        # print(i)
+        alfa=ReturnedRecipe.parse_obj(i).dict()
+        # print(type(alfa))
+        alfa["id"]=str(i["_id"])
+        res.append(alfa)
+    return res
+    
 
 

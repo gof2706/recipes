@@ -15,7 +15,8 @@ async def get_users(validate):
     # pass
 
 @router.get('/get_all_recipes')############
-async def get_recipes():
+async def get_recipes(filter='name',sort_filter='name',page=1,query=""):
+    return await service.get_all_recipes({'filter':filter,"sort_filter":sort_filter,"page":page,"query":query})
     pass
 
 @router.get('/get_user')############
