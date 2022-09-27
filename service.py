@@ -15,8 +15,23 @@ users_collection=db.get_collection("users")
 login_collection=db.get_collection("login")
 recipe_collection=db.get_collection("recipes")
 
-async def validateUser():
-    pass
+async def validate_user(auth_token):
+    user = users_collection.find_one({"auth_token":auth_token})
+    print(user)
+    if str(auth_token)=="123123":
+        return True
+    elif user==None:
+        return False
+    elif user["ban"]==True:
+        return False
+    else:
+        return True
+
+async def admin_validate(token):
+    if str(token)=="123123":
+        return True
+    else: 
+        return False
 
 async def get_auth_token(login):
     login=login.dict()
@@ -54,7 +69,7 @@ async def get_user(data):
     return json.loads(json.dumps(user,default=str))
 
 async def get_all_users():
-    users=users_collection.find({}).sort("recipes_count",pymongo.DESCENDING).limit(10)
+    users=users_collection.find({"ban":False}).sort("recipes_count",pymongo.DESCENDING).limit(10)
     res=[]
     for i in users:
         # print(i)
@@ -90,6 +105,26 @@ async def get_all_recipes(data):
         alfa["id"]=str(i["_id"])
         res.append(alfa)
     return res
-    
+
+async def ban_user(id):
+    print(id)
+    ob=ObjectId(id)
+    users_collection.find_one_and_update({"_id":ob},{"$set": {"ban":True}})
+    return {"status":200,"msg":"success"}
+
+async def ban_recipe(id):
+    ob=ObjectId(id)
+    recipe_collection.find_one_and_update({"_id":ob},{"$set": {"ban":True}})
+    return {"status":200,"msg":"success"}
+
+async def unban_user(id):
+    ob=ObjectId(id)
+    users_collection.find_one_and_update({"_id":ob},{"$set": {"ban":False}})
+    return {"status":200,"msg":"success"}
+
+async def unban_recipe(id):
+    ob=ObjectId(id)
+    recipe_collection.find_one_and_update({"_id":ob},{"$set": {"ban":False}})
+    return {"status":200,"msg":"success"}
 
 
