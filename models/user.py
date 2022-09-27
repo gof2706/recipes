@@ -6,11 +6,24 @@ class User(BaseModel):
     nickname:str
     ban:bool | None = False
     favorites:list[str] | None = []
-    created:datetime.time | None=None
-    updated:datetime.time | None=None
-    acess_token:str | None = None
+    created:int | None=None
+    updated:int | None=None
+    auth_token:str | None = None
+    recipes_count:int | None = 0
 
 class RegisterUser(BaseModel):
     nickname:str
     password:str
 
+class Validate(BaseModel):
+    auth_token:str
+
+class ReturnedUser(BaseModel):
+    nickname:str
+    ban:bool | None = False
+    favorites:list[str] | None = []
+    created:int | None=None
+    updated:int | None=None
+    recipes_count:int | None = 0
+    class Config:
+        orm_mode = True
