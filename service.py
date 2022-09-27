@@ -6,6 +6,7 @@ from models.user import RegisterUser, ReturnedUser, User
 from pymongo import MongoClient
 import pymongo
 from bson.objectid import ObjectId
+
 # import motor.motor_asyncio
 
 # client=motor.motor_asyncio.AsyncIOMotorClient('mongodb://localhost:27017')
@@ -17,7 +18,7 @@ recipe_collection=db.get_collection("recipes")
 
 async def validate_user(auth_token):
     user = users_collection.find_one({"auth_token":auth_token})
-    print(user)
+    # print(user)
     if str(auth_token)=="123123":
         return True
     elif user==None:
@@ -40,7 +41,7 @@ async def get_auth_token(login):
     log=dict(login_collection.find_one({"nickname":login["nickname"]}))
     print(log)
     if log["password"]==login["password"]:
-        return {"auth_token":str(hash(log["password"]))}
+        return {"auth_token":str(hash(log["password"]+log["nickname"]))}
     else: 
         return {"status":404,"msg":"Password wrong"}
 
@@ -62,11 +63,10 @@ async def register_user(data):
 
 
 async def get_user(data):
-    # user=data.dict()
     ob=ObjectId(data)
     user=users_collection.find_one(ob)
-    # res=user
-    return json.loads(json.dumps(user,default=str))
+    res= ReturnedUser.parse_obj(user)
+    return res
 
 async def get_all_users():
     users=users_collection.find({"ban":False}).sort("recipes_count",pymongo.DESCENDING).limit(10)
@@ -126,5 +126,20 @@ async def unban_recipe(id):
     ob=ObjectId(id)
     recipe_collection.find_one_and_update({"_id":ob},{"$set": {"ban":False}})
     return {"status":200,"msg":"success"}
+
+async def delete_user(auth):
+    user = users_collection.find_one({"auth_token":auth})
+    # print(str(user))
+    recipe_collection.delete_many({"author":str(user["_id"])})
+    users_collection.find_one_and_delete({"_id":user["_id"]})
+    return {"status" :200}
+
+
+async def delete_recipe(id,auth):
+    # print(str(user))
+    user = users_collection.find_one({"auth_token":auth})
+    ob= ObjectId(id)
+    recipe_collection.find_one_and_delete({"_id":ob,"author":str(user["_id"])})
+    return {"status" :200}
 
 

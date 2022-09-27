@@ -5,7 +5,7 @@ from bson import ObjectId
 class User(BaseModel):
     nickname:str
     ban:bool | None = False
-    favorites:list[str] | None = []
+    favorites:list[str] = []
     created:float | None=None
     updated:float | None=None
     auth_token:str | None = None
