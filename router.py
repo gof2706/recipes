@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from models.recipe import Recipe
-from models.user import RegisterUser, ReturnedUser, User, Validate
+from models.user import RegisterUser, ReturnedUser, User
 import service
 
 router=APIRouter()

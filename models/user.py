@@ -15,9 +15,6 @@ class RegisterUser(BaseModel):
     nickname:str
     password:str
 
-class Validate(BaseModel):
-    auth_token:str
-
 class ReturnedUser(BaseModel):
     nickname:str
     ban:bool | None = False
